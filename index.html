@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Для Назара ♡</title>
+  <meta name="description" content="Маленький лист для тебе.">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@400;500&display=swap');
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,.9), transparent 30%),
+        linear-gradient(135deg, #f8f0e8 0%, #efe2d5 100%);
+      color: #3e3430;
+      font-family: "Cormorant Garamond", Georgia, serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 28px 18px;
+    }
+
+    .paper {
+      width: min(760px, 100%);
+      min-height: 82vh;
+      padding: clamp(42px, 8vw, 85px) clamp(28px, 8vw, 90px);
+      background: rgba(255, 252, 247, .94);
+      box-shadow: 0 18px 55px rgba(82, 61, 48, .14);
+      position: relative;
+      border: 1px solid rgba(126, 98, 78, .12);
+    }
+
+    .paper::before {
+      content: "";
+      position: absolute;
+      inset: 13px;
+      border: 1px solid rgba(126, 98, 78, .10);
+      pointer-events: none;
+    }
+
+    .heart {
+      text-align: center;
+      font-size: 25px;
+      opacity: .7;
+      margin-bottom: 24px;
+    }
+
+    .date {
+      text-align: center;
+      font-family: Inter, sans-serif;
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      opacity: .48;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: clamp(34px, 7vw, 54px);
+      font-weight: 500;
+      margin: 0 0 44px;
+    }
+
+    #letter {
+      font-size: clamp(22px, 4.2vw, 27px);
+      line-height: 1.72;
+      white-space: pre-wrap;
+      min-height: 330px;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1em;
+      background: #756056;
+      vertical-align: -0.08em;
+      margin-left: 2px;
+      animation: blink .8s infinite;
+    }
+
+    @keyframes blink {
+      0%, 45% { opacity: 1; }
+      46%, 100% { opacity: 0; }
+    }
+
+    .signature {
+      margin-top: 42px;
+      text-align: right;
+      font-size: 27px;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 1.5s ease, transform 1.5s ease;
+    }
+
+    .signature.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .restart {
+      display: block;
+      margin: 42px auto 0;
+      padding: 9px 17px;
+      border: 1px solid rgba(80, 61, 51, .25);
+      background: transparent;
+      color: #5a4940;
+      border-radius: 20px;
+      font-family: Inter, sans-serif;
+      font-size: 11px;
+      letter-spacing: 1px;
+      cursor: pointer;
+      opacity: .55;
+    }
+
+    .restart:hover { opacity: 1; }
+
+    .hint {
+      position: fixed;
+      bottom: 12px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-family: Inter, sans-serif;
+      font-size: 9px;
+      letter-spacing: 1px;
+      opacity: .28;
+    }
+
+    @media (max-width: 520px) {
+      body { padding: 12px; }
+      .paper { min-height: 92vh; }
+      .paper::before { inset: 8px; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="paper">
+    <div class="heart">♡</div>
+    <div class="date">6 October 2026</div>
+    <h1>Для Назара</h1>
+
+    <div id="letter" aria-live="polite"></div>
+    <div class="signature" id="signature">Твоя Юля ♡</div>
+
+    <button class="restart" onclick="startTyping()">прочитати ще раз</button>
+  </main>
+
+  <div class="hint">маленький лист, який можна знайти лише доторком</div>
+
+  <script>
+    /*
+      ТУТ МОЖНА ЗМІНИТИ ТЕКСТ ЛИСТА.
+      Не видаляй зворотні лапки ` на початку та в кінці.
+    */
+
+    const letter = `Мій любий,
+
+Я довго думала, як подарувати тобі щось, що не просто лежатиме десь на полиці, а залишиться маленьким спогадом про нас.
+
+Тому цей лист захований тут — і його можна знайти лише доторком.
+
+За ці два роки в нас було стільки всього: подорожі, будні, смішні моменти, втома, плани, маленькі радощі й просто вечори, коли ми сидимо поруч і кожен займається своїми справами.
+
+І знаєш, я найбільше люблю саме це.
+
+Те, що з тобою навіть звичайний день стає нашим.
+
+Дякую, що ти є в моєму житті.
+
+Я люблю тебе.`;
+
+    const letterEl = document.getElementById("letter");
+    const signatureEl = document.getElementById("signature");
+
+    let timer;
+    let index = 0;
+
+    function startTyping() {
+      clearInterval(timer);
+      index = 0;
+      letterEl.innerHTML = "";
+      signatureEl.classList.remove("show");
+
+      const cursor = document.createElement("span");
+      cursor.className = "cursor";
+      letterEl.appendChild(cursor);
+
+      // Швидкість друку: більше число = повільніше
+      const speed = 42;
+
+      timer = setInterval(() => {
+        if (index < letter.length) {
+          cursor.before(document.createTextNode(letter[index]));
+          index++;
+        } else {
+          clearInterval(timer);
+          setTimeout(() => signatureEl.classList.add("show"), 900);
+        }
+      }, speed);
+    }
+
+    startTyping();
+  </script>
+</body>
+</html>
